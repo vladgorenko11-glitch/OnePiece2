@@ -1,0 +1,635 @@
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ван-Пис | Сезон 2 | 1080p</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Raleway:wght@300;400;500;600;700;800;900&amp;family=Spectral:wght@200;400;700&amp;family=Russo+One&amp;display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #14081f; --bg2: #1f0f33; --bg3: #2c1547; --bg4: #3d1f5e;
+  --pink: #a855f7; --pink2: #7c3aed; --pink3: #c084fc;
+  --pinkglow: rgba(192,132,252,0.55);
+  --green: #ec4899; --green2: #db2777; --green3: #f0abfc;
+  --greenglow: rgba(240,171,252,0.45);
+  --text: #f3e8ff; --text2: #d8b4fe; --text3: #6b4a8a;
+  --border: rgba(192,132,252,0.18); --border-pink: rgba(192,132,252,0.4);
+}
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Raleway', sans-serif; font-weight: 600; min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(0,0,0,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(168,85,247,0.12) 0%, transparent 50%);
+}
+#admin-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; }
+#admin-modal.open { display:flex; }
+.modal-box { background:var(--bg2); border:1px solid var(--border-pink); border-radius:6px; padding:2.5rem; width:420px; max-width:90vw; box-shadow:0 0 40px rgba(255,255,255,0.1); }
+.modal-box h2 { font-family:'Bebas Neue',serif; font-size:2rem; letter-spacing:0.15em; color:var(--pink3); margin-bottom:0.25rem; text-shadow:0 0 20px var(--pinkglow); }
+.modal-box p { font-size:0.8rem; color:var(--text2); margin-bottom:1.5rem; }
+.modal-input { width:100%; padding:10px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:4px; color:var(--text); font-family:'Raleway',sans-serif; font-size:0.9rem; margin-bottom:1rem; outline:none; transition:border-color 0.2s; }
+.modal-input:focus { border-color:var(--pink3); }
+.modal-error { font-size:0.78rem; color:#f87171; margin-bottom:0.75rem; display:none; }
+.modal-error.show { display:block; }
+header { background:linear-gradient(180deg,rgba(0,0,0,0.98) 0%,rgba(0,0,0,0.75) 100%); padding:0 4%; position:sticky; top:0; z-index:100; border-bottom:1px solid rgba(192,132,252,0.22); }
+.header-inner { max-width:1400px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:68px; }
+.logo { display:flex; align-items:center; gap:1rem; }
+.logo-text { display:flex; align-items:center; gap:0.35rem; line-height:1; }
+.logo-shape { width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; color:var(--pink3); flex-shrink:0; }
+.logo-shape svg { width:22px; height:22px; fill:none; stroke:var(--pink3); stroke-width:2; filter:drop-shadow(0 0 6px var(--pinkglow)); }
+.logo-sep { width:1px; height:28px; background:var(--border-pink); }
+.logo-sub { font-size:0.62rem; color:var(--text2); letter-spacing:0.18em; text-transform:uppercase; line-height:1.6; font-weight:500; }
+.header-right { display:flex; align-items:center; gap:0.75rem; }
+.admin-pill { background:var(--pink); color:#fff; font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:4px 12px; border-radius:3px; cursor:pointer; border:none; font-family:'Raleway',sans-serif; transition:background 0.2s; }
+.admin-pill:hover { background:var(--pink2); }
+.admin-pill.active { background:#1a1500; color:var(--text2); }
+.hero-banner { position:relative; overflow:hidden; min-height:620px; display:flex; flex-direction:column; justify-content:flex-end; }
+.hero-bg-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center center; filter:saturate(1.05); }
+.hero-overlay-top { position:absolute; top:0; left:0; right:0; height:120px; background:linear-gradient(180deg,rgba(20,8,31,0.25) 0%,transparent 100%); z-index:1; }
+.hero-overlay-bottom { position:absolute; bottom:0; left:0; right:0; height:40%; background:linear-gradient(0deg,rgba(20,8,31,1) 0%,rgba(20,8,31,0.55) 35%,rgba(20,8,31,0.0) 100%); z-index:1; }
+.hero-fade-bottom { position:absolute; bottom:-2px; left:0; right:0; height:120px; background:linear-gradient(0deg, rgba(20,8,31,1) 0%, rgba(5,10,20,0) 100%); z-index:2; pointer-events:none; }
+.hero-title-shade { position:absolute; left:0; bottom:0; width:55%; height:70%; background:radial-gradient(ellipse at 15% 85%, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,0.15) 65%, transparent 85%); z-index:1; pointer-events:none; }
+.hero-overlay-sides { position:absolute; inset:0; background:none; z-index:1; }
+.hero-content { position:relative; z-index:2; padding:2.5rem 4% 3rem; max-width:1400px; margin:0 auto; width:100%; }
+.hero-eyebrow { font-size:0.68rem; letter-spacing:0.35em; color:var(--green3); text-transform:uppercase; margin-bottom:1rem; font-weight:700; text-shadow:0 0 12px var(--greenglow); }
+.hero-title { font-family:'Russo One',sans-serif; font-size:clamp(3.2rem,8.5vw,6.4rem); font-weight:400; letter-spacing:0.04em; line-height:0.9; text-transform:uppercase; margin-bottom:0.4rem; background:linear-gradient(to bottom,#f3e8ff 0%,#d8b4fe 50%,#a855f7 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 0 20px rgba(192,132,252,0.5)); }
+.hero-subtitle { font-family:'Spectral',serif; font-size:clamp(1.1rem,2.6vw,1.9rem); font-weight:200; letter-spacing:0.45em; line-height:1.1; text-transform:uppercase; color:#e9d5ff; opacity:0.85; padding-left:0.25rem; margin-bottom:1.25rem; }
+.hero-meta { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; margin-bottom:1.5rem; }
+.badge { padding:4px 12px; border-radius:2px; font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:800; }
+.badge-pink { background:var(--pink); color:#fff; }
+.badge-green { background:var(--green); color:#fff; }
+.badge-outline { background:transparent; border:1px solid var(--border-pink); color:var(--pink3); }
+.badge-gray { background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); color:var(--text2); backdrop-filter:blur(4px); }
+.hero-desc { font-size:0.88rem; color:rgba(243,232,255,0.88); max-width:560px; line-height:1.65; font-weight:500; }
+#ep-count-badge { color:var(--pink3); }
+.container { max-width:1400px; margin:0 auto; padding:2rem 4%; }
+#player-section { background:#000; border-radius:6px; overflow:hidden; margin-bottom:2.5rem; border:1px solid var(--border); box-shadow:0 8px 40px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.05); }
+#player-header { background:linear-gradient(90deg,var(--bg2),var(--bg3)); padding:0.875rem 1.5rem; border-bottom:1px solid var(--border-pink); display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+#now-playing { font-family:'Bebas Neue',serif; font-size:1.2rem; letter-spacing:0.1em; color:var(--pink3); }
+#player-container { background:#000; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; position:relative; }
+#main-video { width:100%; height:100%; display:none; }
+#player-placeholder { text-align:center; padding:4rem; }
+#player-placeholder .big-icon { width:80px; height:80px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem; font-size:2rem; color:rgba(255,255,255,0.22); }
+#player-placeholder p { color:var(--text3); font-size:0.85rem; }
+.btn { padding:7px 16px; border-radius:3px; font-family:'Raleway',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; border:1px solid var(--border); background:var(--bg3); color:var(--text); transition:all 0.18s; }
+.btn:hover { background:var(--bg4); border-color:var(--text3); }
+.btn.primary { background:var(--pink); color:#fff; border-color:var(--pink); }
+.btn.primary:hover { background:var(--pink2); border-color:var(--pink2); }
+.btn.danger { border-color:rgba(255,255,255,0.15); color:var(--pink3); background:transparent; }
+.btn.danger:hover { background:rgba(255,255,255,0.05); }
+.btn-nav { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.12); color:var(--text); padding:6px 14px; border-radius:3px; font-size:0.75rem; font-weight:600; letter-spacing:0.05em; cursor:pointer; font-family:'Raleway',sans-serif; transition:all 0.18s; }
+.btn-nav:hover { background:rgba(255,255,255,0.15); }
+.section-title { font-family:'Bebas Neue',serif; font-size:1.6rem; letter-spacing:0.15em; color:var(--text); margin-bottom:1.25rem; font-weight:400; display:flex; align-items:center; gap:0.75rem; text-transform:uppercase; }
+.section-title .red-bar { width:4px; height:26px; background:var(--pink3); border-radius:2px; box-shadow:0 0 10px var(--pinkglow); }
+.section-title .line { flex:1; height:1px; background:var(--border); margin-left:0.5rem; }
+.episodes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:0.75rem; margin-bottom:2.5rem; }
+.episode-card { background:var(--bg2); border:1px solid var(--border); border-radius:4px; overflow:hidden; cursor:pointer; transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s; position:relative; }
+.episode-card:hover { transform:scale(1.04); border-color:var(--border-pink); box-shadow:0 8px 30px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.12); z-index:2; }
+.episode-card.active { border-color:var(--pink3); box-shadow:0 0 0 2px rgba(255,255,255,0.22); }
+.episode-card.active::after { content:'▶ ГРАЄ'; position:absolute; top:8px; right:8px; background:var(--pink); color:#fff; font-size:0.58rem; font-weight:700; letter-spacing:0.1em; padding:3px 7px; border-radius:2px; font-family:'Raleway',sans-serif; }
+.ep-thumb { aspect-ratio:16/9; background:#111111; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.ep-thumb::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,0.7) 100%); }
+.ep-number-bg { font-family:'Bebas Neue',serif; font-size:3.5rem; font-weight:400; color:rgba(255,255,255,0.08); letter-spacing:-0.02em; user-select:none; }
+.play-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); opacity:0; transition:opacity 0.2s; z-index:2; }
+.episode-card:hover .play-overlay { opacity:1; }
+.play-overlay-icon { width:44px; height:44px; background:var(--pink); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.1rem; padding-left:4px; box-shadow:0 0 25px rgba(255,255,255,0.3); }
+.ep-info { padding:0.75rem; }
+.ep-num { font-size:0.65rem; color:var(--pink3); letter-spacing:0.12em; text-transform:uppercase; font-weight:700; margin-bottom:2px; }
+.ep-title { font-size:0.84rem; color:var(--text); font-weight:700; line-height:1.3; }
+.ep-status { margin-top:5px; font-size:0.68rem; }
+.ep-status.uploaded { color:var(--pink3); }
+.ep-status.empty { color:var(--text3); }
+.admin-only { display:none; }
+body.admin-mode .admin-only { display:block; }
+body.admin-mode .ep-upload-btn { display:block; }
+.ep-upload-btn { display:none; margin-top:7px; width:100%; padding:5px; background:transparent; border:1px dashed rgba(255,255,255,0.12); border-radius:3px; color:var(--text3); font-size:0.68rem; cursor:pointer; font-family:'Raleway',sans-serif; font-weight:500; letter-spacing:0.05em; transition:all 0.18s; }
+.ep-upload-btn:hover { border-color:var(--pink3); color:var(--pink3); background:rgba(255,255,255,0.03); }
+#admin-panel { background:var(--bg2); border:1px solid var(--border-pink); border-radius:6px; padding:1.5rem; margin-bottom:2rem; display:none; box-shadow:0 0 20px rgba(255,255,255,0.05); }
+body.admin-mode #admin-panel { display:block; }
+.admin-section-label { font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--pink3); font-weight:700; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid rgba(255,255,255,0.1); }
+.admin-row { display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; margin-bottom:0.75rem; }
+.admin-row:last-of-type { margin-bottom:0; }
+.shared-info { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:0.75rem 1rem; margin-bottom:1rem; font-size:0.75rem; color:var(--text2); line-height:1.6; }
+.shared-info strong { color:var(--pink3); }
+.url-input { flex:1; padding:8px 12px; background:var(--bg3); border:1px solid var(--border); border-radius:3px; color:var(--text); font-family:'Raleway',sans-serif; font-size:0.82rem; outline:none; transition:border-color 0.2s; min-width:200px; }
+.url-input:focus { border-color:var(--pink3); }
+select { padding:8px 12px; background:var(--bg3); border:1px solid var(--border); border-radius:3px; color:var(--text); font-family:'Raleway',sans-serif; font-size:0.82rem; cursor:pointer; outline:none; }
+.storage-wrap { margin-top:1.25rem; padding-top:1rem; border-top:1px solid var(--border); }
+.storage-label { display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text3); margin-bottom:5px; }
+.storage-bar { height:3px; background:var(--bg4); border-radius:2px; overflow:hidden; }
+.storage-fill { height:100%; background:var(--pink3); border-radius:2px; transition:width 0.5s; width:0%; }
+.upload-progress { display:none; margin-top:0.75rem; font-size:0.78rem; color:var(--text2); }
+.progress-bar { height:2px; background:var(--bg4); border-radius:2px; margin-top:5px; overflow:hidden; }
+.progress-fill { height:100%; background:var(--pink3); width:0%; transition:width 0.2s; }
+.share-box { background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:1.25rem 1.5rem; margin-bottom:2rem; }
+.share-box h3 { font-family:'Bebas Neue',serif; font-size:1.1rem; letter-spacing:0.15em; color:var(--text2); margin-bottom:0.75rem; text-transform:uppercase; }
+.share-url { display:flex; gap:0.5rem; }
+.share-url input { flex:1; padding:7px 12px; background:var(--bg); border:1px solid var(--border); border-radius:3px; color:var(--text3); font-size:0.78rem; font-family:monospace; outline:none; }
+.share-note { font-size:0.72rem; color:var(--text3); margin-top:0.5rem; line-height:1.5; }
+#toast { position:fixed; bottom:2rem; right:2rem; background:var(--bg3); border:1px solid var(--border); border-left:3px solid var(--pink3); border-radius:4px; padding:0.75rem 1.25rem; font-size:0.82rem; color:var(--text); transform:translateY(80px); opacity:0; transition:all 0.28s cubic-bezier(0.34,1.56,0.64,1); z-index:9998; max-width:300px; }
+#toast.show { transform:translateY(0); opacity:1; }
+#toast.success { border-left-color:var(--pink3); color:var(--pink3); }
+#toast.error { border-left-color:#f87171; color:#f87171; }
+footer { border-top:1px solid var(--border); padding:1.5rem 4%; text-align:center; font-size:0.7rem; color:var(--text3); letter-spacing:0.1em; text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:0.5rem; }
+input[type="file"] { display:none; }
+@media (max-width:600px) { .container { padding:1rem; } .episodes-grid { grid-template-columns:1fr 1fr; } header { padding:0 1rem; } }
+</style>
+</head>
+<body class="">
+<div class="" id="admin-modal">
+<div class="modal-box">
+<h2>Вход Админа</h2>
+<p>Только администратор может загружать и редактировать серии</p>
+<input class="modal-input" id="pwd-input" onkeydown="if(event.key==='Enter')checkPwd()" placeholder="Введите пароль" type="password"/>
+<div class="modal-error" id="pwd-error">Неверный пароль. Попробуйте снова.</div>
+<div style="display:flex;gap:0.5rem;">
+<button class="btn primary" onclick="checkPwd()" style="flex:1;">Войти</button>
+<button class="btn" onclick="closeAdminModal()">Отмена</button>
+</div>
+</div>
+</div>
+<header>
+<div class="header-inner">
+<div class="logo">
+<img src="https://id-preview--a94492db-bcd4-45fa-b773-efd8a8daa913.lovable.app/__l5e/assets-v1/053d797e-bbc3-4bf6-9e8e-716cbfa79edb/one-piece-logo.png" alt="One Piece" style="height:42px;width:auto;display:block;filter:drop-shadow(0 0 8px rgba(192,132,252,0.35));"/>
+<div class="logo-sep"></div>
+<div class="logo-sub">Видеоархив<br/>Сезон 2 · 2026</div>
+</div>
+<div class="header-right">
+<span id="admin-status-label" style="font-size:0.7rem;color:var(--text3);letter-spacing:0.05em;display:none;">Режим администратора</span>
+</div>
+</div>
+</header>
+<div class="hero-banner">
+
+<img class="hero-bg-img" src="https://id-preview--a94492db-bcd4-45fa-b773-efd8a8daa913.lovable.app/__l5e/assets-v1/195d6774-4c6a-48d8-b74a-4e94e34a3067/one-piece-hero.jpg" alt="One Piece">
+<div class="hero-overlay-top"></div>
+<div class="hero-overlay-sides"></div>
+<div class="hero-overlay-bottom"></div>
+<div class="hero-fade-bottom"></div>
+<div class="hero-title-shade"></div>
+<div class="hero-content">
+<div class="hero-eyebrow">▮ Сезон 2 · Полный · 2026</div>
+<h1 class="hero-title">Ван Пис</h1>
+<div class="hero-subtitle">One Piece</div>
+<div class="hero-meta">
+<span class="badge badge-pink">1080p</span>
+<span class="badge badge-green">Дубляж</span>
+<span class="badge badge-outline">2 Сезон</span>
+<span class="badge badge-gray">2026</span>
+<span class="badge badge-gray" id="ep-count-badge">0 / 8 серий</span>
+</div>
+<div class="hero-desc">Команда соломенной шляпы продолжает своё путешествие — теперь по тайному Гранд Лайн. Луффи и его друзья встречают новых союзников и опасных врагов, раскрывают секреты Роялей Небес и сражаются с агентами Мирового Правительства. Восемь захватывающих эпизодов второго сезона в качестве 1080p с профессиональным дубляжом.</div>
+</div>
+</div>
+<div class="container">
+<div id="player-section">
+<div id="player-header">
+<div id="now-playing">— Выберите серию —</div>
+<div style="display:flex;gap:0.5rem;align-items:center;">
+<button class="btn-nav" onclick="changeEp(-1)">◀ Пред.</button>
+<button class="btn-nav" onclick="changeEp(1)">След. ▶</button>
+</div>
+</div>
+<div id="player-container">
+<video controls="" id="main-video" preload="metadata" src="" style="display:none;"></video>
+<div id="player-placeholder" style="display:flex;flex-direction:column;align-items:center;">
+<div class="big-icon">▶</div>
+<p>Выберите серию ниже для просмотра</p>
+</div>
+</div>
+</div>
+<div class="section-title">
+<div class="red-bar"></div>
+    Серии сезона
+    <div class="line"></div>
+</div>
+<div class="episodes-grid" id="episodes-grid"><div class="episode-card" id="card-1" style="opacity: 0.5; cursor: default;">
+<div class="ep-thumb">
+<div class="ep-number-bg">01</div>
+<div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+</div>
+<div class="ep-info">
+<div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+<span>Ван Пис С2 · E01</span>
+</div>
+<div class="ep-title">Начало конца</div>
+<div class="ep-status empty">○ Нет видео</div>
+</div></div><div class="episode-card" id="card-2" style="opacity: 0.5; cursor: default;">
+<div class="ep-thumb">
+<div class="ep-number-bg">02</div>
+<div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+</div>
+<div class="ep-info">
+<div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+<span>Ван Пис С2 · E02</span>
+</div>
+<div class="ep-title">Охота на хорошего кита</div>
+<div class="ep-status empty">○ Нет видео</div>
+</div></div><div class="episode-card" id="card-3" style="opacity: 0.5; cursor: default;">
+<div class="ep-thumb">
+<div class="ep-number-bg">03</div>
+<div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+</div>
+<div class="ep-info">
+<div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+<span>Ван Пис С2 · E03</span>
+</div>
+<div class="ep-title">Дела в Виски-Пик</div>
+<div class="ep-status empty">○ Нет видео</div>
+</div></div><div class="episode-card" id="card-4" style="opacity: 0.5; cursor: default;">
+<div class="ep-thumb">
+<div class="ep-number-bg">04</div>
+<div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+</div>
+<div class="ep-info">
+<div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+<span>Ван Пис С2 · E04</span>
+</div>
+<div class="ep-title">Большие неприятности в Литл-Гардене</div>
+<div class="ep-status empty">○ Нет видео</div>
+</div></div><div class="episode-card" id="card-5" style="opacity: 0.5; cursor: default;">
+<div class="ep-thumb">
+<div class="ep-number-bg">05</div>
+<div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+</div>
+<div class="ep-info">
+<div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+<span>Ван Пис С2 · E05</span>
+</div>
+<div class="ep-title">Перекуси в «Баратиэ»!</div>
+<div class="ep-status empty">○ Нет видео</div>
+</div></div><div class="episode-card" id="card-6" style="opacity: 0.5; cursor: default;">
+<div class="ep-thumb">
+<div class="ep-number-bg">06</div>
+<div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+</div>
+<div class="ep-info">
+<div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+<span>Ван Пис С2 · E06</span>
+</div>
+<div class="ep-title">Шеф и поварёнок</div>
+<div class="ep-status empty">○ Нет видео</div>
+</div></div><div class="episode-card" id="card-7" style="opacity: 0.5; cursor: default;">
+<div class="ep-thumb">
+<div class="ep-number-bg">07</div>
+<div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+</div>
+<div class="ep-info">
+<div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+<span>Ван Пис С2 · E07</span>
+</div>
+<div class="ep-title">Девушка с татуировкой пилы-рыбы</div>
+<div class="ep-status empty">○ Нет видео</div>
+</div></div><div class="episode-card" id="card-8" style="opacity: 0.5; cursor: default;">
+<div class="ep-thumb">
+<div class="ep-number-bg">08</div>
+<div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+</div>
+<div class="ep-info">
+<div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+<span>Ван Пис С2 · E08</span>
+</div>
+<div class="ep-title">Худший на Востоке</div>
+<div class="ep-status empty">○ Нет видео</div>
+</div></div></div>
+<div id="admin-panel">
+<div class="admin-section-label">⚙ Панель администратора</div>
+<div class="shared-info">
+<strong>🌐 Общий доступ через URL:</strong> вставьте прямую ссылку на видео (mp4, m3u8) — она сохранится в коде страницы и будет видна <strong>всем</strong> посетителям. Для этого нажмите «Сохранить URL», затем скачайте обновлённый файл и замените страницу на сервере.<br/><br/>
+<strong>💾 Локальный файл:</strong> загрузка файла с компьютера работает только в вашем браузере — другие посетители его не увидят.
+    </div>
+<div class="admin-row">
+<select id="ep-select"><option value="">— Серия —</option><option value="1">E01 — Начало конца</option><option value="2">E02 — Охота на хорошего кита</option><option value="3">E03 — Дела в Виски-Пик</option><option value="4">E04 — Большие неприятности в Литл-Гардене</option><option value="5">E05 — Перекуси в «Баратиэ»!</option><option value="6">E06 — Шеф и поварёнок</option><option value="7">E07 — Девушка с татуировкой пилы-рыбы</option><option value="8">E08 — Худший на Востоке</option></select>
+<input class="url-input" id="url-input" placeholder="Прямая ссылка на видео (mp4, m3u8...) — для всех посетителей" type="text"/>
+<button class="btn primary" onclick="saveUrl()">Сохранить URL</button>
+</div>
+<div class="admin-row">
+<button class="btn danger" onclick="clearAll()">✕ Очистить всё</button>
+<button class="btn" onclick="exportLinks()">↓ Экспорт ссылок .txt</button>
+<button class="btn danger" onclick="changePassword()">🔑 Сменить пароль</button>
+</div>
+<div class="upload-progress" id="upload-progress">
+<span id="upload-label">Загрузка...</span>
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+</div>
+<div class="storage-wrap">
+<div class="storage-label">
+<span>Хранилище (IndexedDB)</span>
+<span id="storage-size">0.0 МБ / ~76.8 ГБ</span>
+</div>
+<div class="storage-bar"><div class="storage-fill" id="storage-fill" style="width: 0%;"></div></div>
+</div>
+</div>
+<div class="share-box">
+<h3>Поделиться</h3>
+<div class="share-url">
+<input id="share-link" readonly="" type="text"/>
+<button class="btn primary" onclick="copyLink()">Копировать</button>
+<button class="btn" onclick="exportPageWithUrls()" style="color:#fff;border-color:var(--pink2);white-space:nowrap;">↓ Скачать страницу</button>
+</div>
+<p class="share-note">Поделитесь ссылкой на эту страницу. Видео, загруженные через URL, будут доступны всем посетителям автоматически.</p>
+</div>
+<div id="toast"></div>
+<input accept="video/*" id="file-input" type="file"/>
+<footer>
+<div style="margin-bottom:0.75rem;">Ван Пис · Сезон 2 · 2026 · 1080p</div>
+<button class="admin-pill" id="admin-btn" onclick="toggleAdmin()" style="opacity:0.45;font-size:0.6rem;padding:3px 10px;letter-spacing:0.08em;">Войти как админ</button>
+</footer>
+<script>
+const ADMIN_PWD_KEY = 'dune_admin_pwd';
+const SESSION_KEY = 'dune_admin_session';
+const DEFAULT_PWD = 'adminvlad0909_';
+
+let SHARED_URLS = {};
+
+const EPISODES = [
+  { num: 1, title: 'Начало конца' },
+  { num: 2, title: 'Охота на хорошего кита' },
+  { num: 3, title: 'Дела в Виски-Пик' },
+  { num: 4, title: 'Большие неприятности в Литл-Гардене' },
+  { num: 5, title: 'Воск наносим, воск снимаем' },
+  { num: 6, title: 'Дорогая Нами' },
+  { num: 7, title: 'Позор северного оленя' },
+  { num: 8, title: 'Олень и ненависть в Королевстве Драм' },
+];
+
+let DB = null, currentEp = null, epData = {}, pendingUploadEp = null, isAdmin = false;
+
+function getStoredPwd() { return localStorage.getItem(ADMIN_PWD_KEY) || DEFAULT_PWD; }
+function checkPwd() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === getStoredPwd()) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    closeAdminModal(); enterAdminMode();
+  } else {
+    document.getElementById('pwd-error').classList.add('show');
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+function changePassword() {
+  const np = prompt('Введите новый пароль (мин. 4 символа):');
+  if (!np || np.length < 4) { toast('Пароль слишком короткий', 'error'); return; }
+  const np2 = prompt('Повторите новый пароль:');
+  if (np !== np2) { toast('Пароли не совпадают', 'error'); return; }
+  localStorage.setItem(ADMIN_PWD_KEY, np);
+  toast('✓ Пароль успешно изменён', 'success');
+}
+function openAdminModal() {
+  document.getElementById('admin-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pwd-input').focus(), 100);
+}
+function closeAdminModal() {
+  document.getElementById('admin-modal').classList.remove('open');
+  document.getElementById('pwd-input').value = '';
+  document.getElementById('pwd-error').classList.remove('show');
+}
+document.getElementById('admin-modal').addEventListener('click', function(e) { if (e.target === this) closeAdminModal(); });
+function toggleAdmin() { if (isAdmin) exitAdminMode(); else openAdminModal(); }
+function enterAdminMode() {
+  isAdmin = true; document.body.classList.add('admin-mode');
+  document.getElementById('admin-btn').textContent = 'Выйти из режима админа';
+  document.getElementById('admin-btn').classList.add('active');
+  document.getElementById('admin-status-label').style.display = 'inline';
+  buildGrid(); toast('✓ Вы вошли как администратор', 'success');
+}
+function exitAdminMode() {
+  isAdmin = false; sessionStorage.removeItem(SESSION_KEY);
+  document.body.classList.remove('admin-mode');
+  document.getElementById('admin-btn').textContent = 'Войти как админ';
+  document.getElementById('admin-btn').classList.remove('active');
+  document.getElementById('admin-status-label').style.display = 'none';
+  buildGrid(); toast('Вы вышли из режима администратора');
+}
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('dune_videos', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('videos', { keyPath: 'ep' });
+    req.onsuccess = e => res(e.target.result); req.onerror = e => rej(e);
+  });
+}
+function dbPut(ep, obj) {
+  return new Promise((res, rej) => {
+    const tx = DB.transaction('videos', 'readwrite');
+    tx.objectStore('videos').put({ ep, ...obj });
+    tx.oncomplete = res; tx.onerror = rej;
+  });
+}
+function dbDelete(ep) {
+  return new Promise((res, rej) => {
+    const tx = DB.transaction('videos', 'readwrite');
+    tx.objectStore('videos').delete(ep);
+    tx.oncomplete = res; tx.onerror = rej;
+  });
+}
+function dbGetAll() {
+  return new Promise((res, rej) => {
+    const tx = DB.transaction('videos', 'readonly');
+    const req = tx.objectStore('videos').getAll();
+    req.onsuccess = e => res(e.target.result); req.onerror = rej;
+  });
+}
+
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'show ' + type;
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => el.className = '', 3500);
+}
+
+function mergeEpData(localItems) {
+  epData = {};
+  for (const [ep, url] of Object.entries(SHARED_URLS)) {
+    epData[parseInt(ep)] = { type: 'url', url, name: `Серия ${ep} (общий URL)`, shared: true };
+  }
+  for (const item of localItems) {
+    epData[item.ep] = { type: item.type, blob: item.blob, url: item.url, name: item.name, shared: false };
+  }
+}
+
+function buildGrid() {
+  const grid = document.getElementById('episodes-grid');
+  const sel = document.getElementById('ep-select');
+  grid.innerHTML = ''; sel.innerHTML = '<option value="">— Серия —</option>';
+
+  EPISODES.forEach(ep => {
+    const data = epData[ep.num];
+    const hasVideo = !!data;
+    const isShared = data && data.shared;
+    const card = document.createElement('div');
+    card.className = 'episode-card' + (currentEp === ep.num ? ' active' : '');
+    card.id = `card-${ep.num}`;
+    const adminBtns = isAdmin ? `
+      <button class="ep-upload-btn" onclick="triggerUpload(${ep.num},event)">${hasVideo ? '↑ Заменить файл' : '↑ Загрузить файл'}</button>
+      ${hasVideo && !isShared ? `<button class="ep-upload-btn" style="color:var(--green3);border-color:rgba(224,58,58,0.2);" onclick="deleteEp(${ep.num},event)">✕ Видалити серію</button>` : ''}
+    ` : '';
+    const sharedBadge = isShared ? `<span style="font-size:0.6rem;color:var(--pink3);letter-spacing:0.05em;">🌐 общий</span>` : '';
+    card.innerHTML = `
+      <div class="ep-thumb">
+        <div class="ep-number-bg">${String(ep.num).padStart(2,'0')}</div>
+        <div class="play-overlay"><div class="play-overlay-icon">▶</div></div>
+      </div>
+      <div class="ep-info">
+        <div class="ep-num" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>S02 E${String(ep.num).padStart(2,'0')}</span>${sharedBadge}
+        </div>
+        <div class="ep-title">${ep.title}</div>
+        <div class="ep-status ${hasVideo?'uploaded':'empty'}">${hasVideo ? '● Доступно для просмотра' : '○ Нет видео'}</div>
+        ${adminBtns}
+      </div>`;
+    if (hasVideo) {
+      card.addEventListener('click', e => { if (e.target.tagName === 'BUTTON') return; playEpisode(ep.num); });
+    } else if (!isAdmin) { card.style.opacity = '0.5'; card.style.cursor = 'default'; }
+    grid.appendChild(card);
+    const opt = document.createElement('option');
+    opt.value = ep.num;
+    opt.textContent = `E${String(ep.num).padStart(2,'0')} — ${ep.title}`;
+    sel.appendChild(opt);
+  });
+  updateBadge(); updateStorage();
+}
+
+function updateBadge() {
+  const count = Object.keys(epData).length;
+  document.getElementById('ep-count-badge').textContent = `${count} / 8 серий`;
+}
+
+async function playEpisode(num) {
+  currentEp = num;
+  const data = epData[num]; if (!data) return;
+  document.querySelectorAll('.episode-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById(`card-${num}`);
+  if (card) card.classList.add('active');
+  const video = document.getElementById('main-video');
+  const placeholder = document.getElementById('player-placeholder');
+  video.style.display = 'block'; placeholder.style.display = 'none';
+  if (data.type === 'blob') { video.src = URL.createObjectURL(data.blob); } else { video.src = data.url; }
+  video.play();
+  const ep = EPISODES.find(e => e.num === num);
+  document.getElementById('now-playing').textContent = `Ван Пис Сезон 2 · E${String(num).padStart(2,'0')} — ${ep ? ep.title : 'Ван Пис'}`;
+}
+
+function changeEp(dir) {
+  if (currentEp === null) { currentEp = 1; }
+  const next = currentEp + dir;
+  if (next < 1 || next > 6) return;
+  if (epData[next]) playEpisode(next);
+  else { currentEp = next; toast(`Серия ${next} не загружена`, 'error'); }
+}
+
+function triggerUpload(epNum, e) {
+  e.stopPropagation(); pendingUploadEp = epNum;
+  document.getElementById('file-input').click();
+}
+
+document.getElementById('file-input').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file || pendingUploadEp === null) return;
+  const epNum = pendingUploadEp; pendingUploadEp = null; e.target.value = '';
+  const prog = document.getElementById('upload-progress');
+  const fill = document.getElementById('progress-fill');
+  const label = document.getElementById('upload-label');
+  prog.style.display = 'block';
+  label.textContent = `Сохранение серии ${epNum} (${(file.size/1024/1024).toFixed(1)} МБ)...`;
+  fill.style.width = '0%';
+  try {
+    let p = 0;
+    const iv = setInterval(() => { p = Math.min(p+4,85); fill.style.width=p+'%'; }, 80);
+    await dbPut(epNum, { type:'blob', blob:file, name:file.name });
+    clearInterval(iv); fill.style.width = '100%';
+    epData[epNum] = { type:'blob', blob:file, name:file.name, shared:false };
+    setTimeout(() => prog.style.display='none', 800);
+    toast(`✓ Серия ${epNum} сохранена (${(file.size/1024/1024).toFixed(1)} МБ) — только локально`, 'success');
+    buildGrid();
+  } catch(err) { prog.style.display = 'none'; toast('Ошибка: ' + err.message, 'error'); }
+});
+
+async function deleteEp(num, e) {
+  e.stopPropagation();
+  if (!confirm(`Удалить серию ${num}?`)) return;
+  await dbDelete(num); delete epData[num];
+  if (currentEp === num) {
+    currentEp = null;
+    document.getElementById('main-video').style.display = 'none';
+    document.getElementById('player-placeholder').style.display = '';
+    document.getElementById('now-playing').textContent = '— Выберите серию —';
+  }
+  buildGrid(); toast(`Серия ${num} удалена`);
+}
+
+async function saveUrl() {
+  const epNum = parseInt(document.getElementById('ep-select').value);
+  const url = document.getElementById('url-input').value.trim();
+  if (!epNum || !url) { toast('Выберите серию и введите URL', 'error'); return; }
+  SHARED_URLS[epNum] = url;
+  epData[epNum] = { type:'url', url, name:`Серия ${epNum} (общий URL)`, shared:true };
+  document.getElementById('url-input').value = '';
+  buildGrid(); toast(`✓ URL серии ${epNum} сохранён. Скачайте обновлённую страницу!`, 'success');
+}
+
+function exportPageWithUrls() {
+  const pageHtml = document.documentElement.outerHTML;
+  const updatedHtml = pageHtml.replace(/let SHARED_URLS = \{.*?\};/s, `let SHARED_URLS = ${JSON.stringify(SHARED_URLS)};`);
+  const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'one-piece-s2.html'; a.click();
+  toast('✓ Файл скачан — замените страницу на сервере', 'success');
+}
+
+async function clearAll() {
+  if (!confirm('Удалить все локальные видео?')) return;
+  const all = await dbGetAll();
+  for (const item of all) await dbDelete(item.ep);
+  mergeEpData([]); currentEp = null;
+  document.getElementById('main-video').style.display = 'none';
+  document.getElementById('player-placeholder').style.display = '';
+  document.getElementById('now-playing').textContent = '— Выберите серию —';
+  buildGrid(); toast('Локальные файлы очищены');
+}
+
+function exportLinks() {
+  const lines = Object.entries(epData).map(([n,d]) => `Серия ${n}: ${d.type==='url' ? d.url : '[локальный файл: '+d.name+']' }`);
+  if (!lines.length) { toast('Нет серий', 'error'); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([lines.join('\n')], {type:'text/plain'}));
+  a.download = 'one-piece_s2_links.txt'; a.click();
+}
+
+async function updateStorage() {
+  try {
+    if ('storage' in navigator && 'estimate' in navigator.storage) {
+      const { usage, quota } = await navigator.storage.estimate();
+      document.getElementById('storage-size').textContent = `${(usage/1024/1024).toFixed(1)} МБ / ~${(quota/1024/1024/1024).toFixed(1)} ГБ`;
+      document.getElementById('storage-fill').style.width = Math.min((usage/quota)*100, 100) + '%';
+    }
+  } catch(e) {}
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(document.getElementById('share-link').value).then(() => toast('Ссылка скопирована!', 'success'));
+}
+
+document.getElementById('share-link').value = window.location.href;
+
+async function init() {
+  DB = await openDB();
+  const all = await dbGetAll();
+  mergeEpData(all);
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    isAdmin = true; document.body.classList.add('admin-mode');
+    document.getElementById('admin-btn').textContent = 'Выйти из режима админа';
+    document.getElementById('admin-btn').classList.add('active');
+    document.getElementById('admin-status-label').style.display = 'inline';
+  }
+  buildGrid();
+  const hash = window.location.hash;
+  if (hash.startsWith('#ep')) {
+    const num = parseInt(hash.slice(3));
+    if (epData[num]) setTimeout(() => playEpisode(num), 300);
+  }
+}
+
+init().catch(e => console.error(e));
+</script>
+</div></body></html>
